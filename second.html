@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love Match</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: url("Desktop2.png") no-repeat center center/cover;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+
+  .percentage {
+    font-size: 5rem;
+    font-weight: bold;
+    color: black;
+    position: relative;
+    z-index: 2;
+  }
+
+  .heart {
+    position: absolute;
+    color: red;
+    font-size: 2rem;
+    animation: floatUp 2s linear forwards;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @keyframes floatUp {
+    0% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-150px) scale(1.5);
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="percentage" id="percentage"></div>
+
+<script>
+  // Set random percentage
+  document.getElementById('percentage').textContent = Math.floor(Math.random() * 51) + 50 + "%";
+
+  // Create hearts bursting
+  function createHeart() {
+    const heart = document.createElement('div');
+    heart.classList.add('heart');
+    heart.textContent = "❤️";
+
+    const percentage = document.getElementById('percentage');
+    const rect = percentage.getBoundingClientRect();
+
+    heart.style.left = rect.left + rect.width / 2 + (Math.random() * 40 - 20) + 'px';
+    heart.style.top = rect.top + window.scrollY + (Math.random() * 20 - 10) + 'px';
+
+    document.body.appendChild(heart);
+
+    setTimeout(() => {
+      heart.remove();
+    }, 2000);
+  }
+
+  // Burst hearts continuously
+  setInterval(createHeart, 300);
+</script>
+
+</body>
+</html>

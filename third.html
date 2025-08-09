@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Affection — Orbiting Stars</title>
+<style>
+  :root{
+    --fg: #ffffff;
+  }
+  html,body { height:100%; margin:0; }
+
+  body {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: url('Desktop3.png') no-repeat center center/cover;
+    overflow:hidden;
+    font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+
+  /* stage keeps everything centered */
+  .stage {
+    position:relative;
+    width:100%;
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    pointer-events:none;
+  }
+
+  /* percentage in the center */
+  #percentage {
+    position:relative;
+    z-index:10;
+    color: var(--fg);
+    font-weight:800;
+    font-size: clamp(48px, 12vw, 140px);
+    text-align:center;
+    text-shadow: 0 6px 18px rgba(0,0,0,0.45);
+    pointer-events:auto;
+  }
+
+  /* Each orbit-wrapper is centered with translate(-50%,-50%).
+     .spin inside it performs the rotation so we don't overwrite centering. */
+  .orbit-wrapper{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform: translate(-50%, -50%);
+    width: calc(var(--r) * 2);
+    height: calc(var(--r) * 2);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .spin {
+    position:absolute;
+    inset:0;
+    transform-origin: 50% 50%;
+    animation: spin linear infinite;
+    /* animation-duration and delay set inline from JS via --dur and --delay */
+    animation-duration: var(--dur, 8s);
+    animation-delay: var(--delay, 0s);
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* the orbiting star: placed at top-center of the orbit container */
+  .star {
+    position:absolute;
+    left:50%;
+    top:0;
+    transform: translateX(-50%);
+    width: var(--size, 6px);
+    height: var(--size, 6px);
+    background: rgba(255,255,255,0.95);
+    border-radius:50%;
+    box-shadow: 0 0 8px rgba(255,255,255,0.9);
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.12));
+    animation: twinkle linear infinite;
+    animation-duration: var(--tw, 2.4s);
+    opacity: 0.9;
+  }
+
+  @keyframes twinkle {
+    0%   { transform: translateX(-50%) scale(0.8); opacity: .5; }
+    50%  { transform: translateX(-50%) scale(1.25); opacity: 1; }
+    100% { transform: translateX(-50%) scale(0.95); opacity: .6; }
+  }
+
+  /* small responsive tweak so stars never block the percentage on very small screens */
+  @media (max-width:420px){
+    #percentage { font-size: clamp(28px, 12vw, 56px); }
+  }
+</style>
+</head>
+<body>
+  <div class="stage" id="stage">
+    <div id="percentage">0%</div>
+  </div>
+
+<script>
+  // random percentage
+  const percentEl = document.getElementById('percentage');
+  const pct = Math.floor(Math.random() * 101); // 0 - 100
+  percentEl.textContent = pct + '%';
+
+  // orbit parameters: radius(px), how many stars in that orbit, duration(s)
+  const orbits = [
+    { r: 80, count: 1, dur: 6 },
+    { r: 130, count: 2, dur: 10 },
+    { r: 190, count: 3, dur: 16 },
+    { r: 260, count: 2, dur: 24 }
+  ];
+
+  const stage = document.getElementById('stage');
+
+  orbits.forEach((cfg) => {
+    for (let i = 0; i < cfg.count; i++) {
+      // wrapper that is centered on the page and sized to diameter
+      const wrapper = document.createElement('div');
+      wrapper.className = 'orbit-wrapper';
+      wrapper.style.setProperty('--r', cfg.r + 'px');
+
+      // inner spin element that rotates
+      const spin = document.createElement('div');
+      spin.className = 'spin';
+      // slightly offset each star by delay so they are spread around the orbit
+      const delay = - (cfg.dur * (i / cfg.count)); // negative so they start at different positions
+      spin.style.setProperty('--dur', cfg.dur + 's');
+      spin.style.setProperty('--delay', delay + 's');
+
+      // star itself
+      const star = document.createElement('div');
+      star.className = 'star';
+      const size = (Math.random() * 4 + 4).toFixed(1) + 'px'; // 4-8px
+      const tw = (Math.random() * 1.6 + 1.6).toFixed(2) + 's'; // twinkle duration
+      star.style.setProperty('--size', size);
+      star.style.setProperty('--tw', tw);
+
+      // append and mount
+      spin.appendChild(star);
+      wrapper.appendChild(spin);
+      stage.appendChild(wrapper);
+    }
+  });
+</script>
+</body>
+</html>

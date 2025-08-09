@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FLAMES</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: url("Desktop1.png") no-repeat center center/cover;
+      font-family: Arial, sans-serif;
+    }
+
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    input {
+      width: 250px;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #d2695a;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #a94f43;
+    }
+
+    .heart {
+      position: fixed;
+      font-size: 20px;
+      animation: floatUp 1s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes floatUp {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-100px) scale(1.5);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <input type="text" placeholder="Name">
+    <input type="text" placeholder="Crush">
+    <button id="goButton">Click</button>
+  </div>
+
+  <script>
+    // Floating heart animation
+    function createHeart(x, y) {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.textContent = "❤️";
+      heart.style.left = x + "px";
+      heart.style.top = y + "px";
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 1000);
+    }
+
+    function handleTyping(e) {
+      const rect = e.target.getBoundingClientRect();
+      const x = rect.left + Math.random() * rect.width;
+      const y = rect.top - 10;
+      createHeart(x, y);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const inputs = document.querySelectorAll("input[type='text']");
+      inputs.forEach(input => {
+        input.addEventListener("input", handleTyping);
+      });
+
+      // Pages list
+      const pages = [
+        "second.html",
+        "third.html",
+        "fourth.html",
+        "fifth.html",
+        "sixth.html"
+      ];
+
+      // On button click, go to random page
+      document.getElementById("goButton").addEventListener("click", () => {
+        const randomPage = pages[Math.floor(Math.random() * pages.length)];
+        window.location.href = randomPage;
+      });
+    });
+  </script>
+
+</body>
+</html>

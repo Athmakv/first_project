@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Figma Background with Percentage</title>
+<style>
+  /* Make page fill screen */
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+
+  /* Background is your Figma design image */
+  body {
+    background: url('Desktop5.png') no-repeat center center;
+    background-size: cover;
+    font-family: system-ui, sans-serif;
+  }
+
+  /* Overlay container for percentage */
+  .overlay-root {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  /* Percentage text */
+  .percentage {
+    font-weight: 800;
+    color: black; /* black as you asked */
+    font-size: clamp(48px, 8vw, 160px);
+    transform-origin: center;
+    animation: pop 900ms cubic-bezier(.2,.9,.3,1) 0s both,
+               wobble 3500ms ease-in-out 900ms infinite;
+    position: relative;
+  }
+
+  .percentage .pct {
+    font-size: 0.55em;
+    margin-left: 0.1em;
+    transform: translateY(-0.08em);
+    display: inline-block;
+  }
+
+  @keyframes pop {
+    0%   { transform: scale(.35); opacity: 0; }
+    70%  { transform: scale(1.06); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes wobble {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-2px) rotate(-0.3deg); }
+    75% { transform: translateY(2px) rotate(0.3deg); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Overlay -->
+<div class="overlay-root">
+  <div class="percentage">
+    <span id="number">0</span><span class="pct">%</span>
+  </div>
+</div>
+
+<script>
+(function(){
+  const minVal = 10;
+  const maxVal = 99;
+  const duration = 1400;
+
+  const randomVal = Math.floor(Math.random() * (maxVal - minVal + 1)) + minVal;
+  const el = document.getElementById('number');
+
+  const easeOutCubic = t => (--t)*t*t + 1;
+
+  let start = null;
+  function step(timestamp) {
+    if (!start) start = timestamp;
+    const elapsed = timestamp - start;
+    const t = Math.min(1, elapsed / duration);
+    const eased = easeOutCubic(t);
+    const current = Math.round(0 + (randomVal - 0) * eased);
+    el.textContent = current;
+    if (t < 1) {
+      requestAnimationFrame(step);
+    } else {
+      el.textContent = randomVal;
+    }
+  }
+  requestAnimationFrame(step);
+})();
+</script>
+
+</body>
+</html>
